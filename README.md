@@ -63,6 +63,19 @@ usd-convert-gsplat -i input.ply -o output.usdz
 python -m usd_convert_gsplat -i input.ply -o output.usdz
 ```
 
+### Building a CLI Bundle
+
+For pipeline use, build a relocatable CLI directory with its own Python
+environment and USD dependencies:
+
+```bash
+scripts/build-cli-bundle.sh dist/usd-convert-gsplat-cli
+dist/usd-convert-gsplat-cli/bin/convert-gsplat-to-usdz input.ply output.usdz
+```
+
+The generated bundle can be copied away from the source checkout and run from
+its new location.
+
 ### Open Source Release Compliance
 
 The `source/python` package is licensed under the Apache License, Version 2.0
