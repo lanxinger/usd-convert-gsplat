@@ -108,7 +108,7 @@ write_gaussian_splat_usd(
 | `.usd` | Generic USD file. |
 | `.usda` | ASCII USD file. |
 | `.usdc` | Binary USD crate file. |
-| `.usdz` | Zip-packaged USD file. |
+| `.usdz` | Zip-packaged USD file containing a binary `.usdc` layer. |
 
 ## Building From Source
 

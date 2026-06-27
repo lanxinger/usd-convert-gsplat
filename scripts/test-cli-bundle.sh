@@ -50,8 +50,16 @@ import zipfile
 path = sys.argv[1]
 with zipfile.ZipFile(path) as archive:
     names = archive.namelist()
-    assert names == ["default.usda"], names
-    data = archive.read("default.usda").decode("utf-8")
-    assert "ParticleField3DGaussianSplat" in data
-    assert "opacities" in data
+    assert names == ["default.usdc"], names
+    data = archive.read("default.usdc")
+    assert data.startswith(b"PXR-USDC"), data[:16]
+
+from pxr import Usd
+
+stage = Usd.Stage.Open(path)
+assert stage
+prim = stage.GetDefaultPrim()
+assert prim
+assert prim.GetTypeName() == "ParticleField3DGaussianSplat"
+assert prim.GetAttribute("opacities").HasAuthoredValue()
 PY

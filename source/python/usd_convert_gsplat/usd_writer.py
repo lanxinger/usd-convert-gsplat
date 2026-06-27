@@ -470,7 +470,7 @@ def write_gaussian_splat_usd(
         ext = ".usda"
 
     want_usdz = ext.lower() == ".usdz"
-    layer_path = base + ".usda" if want_usdz else output_path
+    layer_path = base + ".usdc" if want_usdz else output_path
 
     src_label = source_file if source_file else "(from PLY/SPZ import)"
 
@@ -499,7 +499,7 @@ def write_gaussian_splat_usd(
     if want_usdz:
         _p(0.95, "Packaging USDZ...")
         with zipfile.ZipFile(output_path, "w", zipfile.ZIP_STORED) as zf:
-            zf.write(layer_path, "default.usda")
+            zf.write(layer_path, "default.usdc")
         os.remove(layer_path)
 
     print(f"[3DGS] Saved -> {output_path}")
@@ -567,7 +567,7 @@ def convertPlyUSD(
 
     base, ext = os.path.splitext(output_file)
     want_usdz = ext and ext.lower() == ".usdz"
-    layer_path = base + ".usda" if want_usdz else output_file
+    layer_path = base + ".usdc" if want_usdz else output_file
 
     stage = Usd.Stage.CreateNew(layer_path)
     UsdGeom.SetStageUpAxis(stage, _up_axis_token(up_axis))
@@ -817,7 +817,7 @@ def convertPlyUSD(
 
     if want_usdz:
         with zipfile.ZipFile(output_file, "w", zipfile.ZIP_STORED) as zf:
-            zf.write(layer_path, "default.usda")
+            zf.write(layer_path, "default.usdc")
         os.remove(layer_path)
 
     print(f"\nSuccessfully saved USD file: {output_file}")
