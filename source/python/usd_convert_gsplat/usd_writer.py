@@ -42,6 +42,15 @@ UP_AXIS_Z = "Z"
 __all__ = ["write_gaussian_splat_usd", "convertPlyUSD", "UP_AXIS_Y", "UP_AXIS_Z"]
 
 
+def _opacity_logit_to_alpha(value: float) -> float:
+    """Convert a raw opacity logit to alpha without overflowing exp()."""
+    v = float(value)
+    if v >= 0.0:
+        return 1.0 / (1.0 + math.exp(-v))
+    exp_v = math.exp(v)
+    return exp_v / (1.0 + exp_v)
+
+
 def _valid_usd_prim_name(name: str) -> str:
     """
     Turn a file stem or user label into a valid USD prim name (no spaces, etc.).
@@ -284,7 +293,7 @@ def _gaussian_splat_data_to_usd(
         quat.Normalize()
         orientations_list.append(quat)
     orientations_vt = Vt.QuatfArray(orientations_list)
-    opacities_vt = Vt.FloatArray([1.0 / (1.0 + math.exp(-float(opacities[i]))) for i in range(vertex_count)])
+    opacities_vt = Vt.FloatArray([_opacity_logit_to_alpha(opacities[i]) for i in range(vertex_count)])
 
     prim = gs_prim.GetPrim() if hasattr(gs_prim, "GetPrim") else gs_prim
 
@@ -665,7 +674,7 @@ def convertPlyUSD(
 
     if "opacity" in vertex_data:
         print("\nProcessing opacities...")
-        opacities = [1.0 / (1.0 + math.exp(-v)) for v in vertex_data["opacity"]]
+        opacities = [_opacity_logit_to_alpha(v) for v in vertex_data["opacity"]]
         opacities_vt = Vt.FloatArray(opacities)
         if _HasParticleField3DGaussianSplat:
             gs_prim.CreateOpacitiesAttr(opacities_vt)
